@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import Keyboard from './Keyboard'; // ייבוא הרכיב החדש
+import Keyboard from "./components/Keyboard"; // ייבוא הרכיב החדש
+import Display from "./components/Display";
 import './App.css';
 
 const KEYBOARDS = {
