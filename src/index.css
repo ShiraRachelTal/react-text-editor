@@ -55,6 +55,26 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.keys-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+  gap: 8px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.key {
+  height: 45px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.key:hover {
+  background: #f0f0f0;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
