@@ -1,34 +1,118 @@
-.main-container {
-  direction: rtl;
-  font-family: sans-serif;
-  padding: 20px;
-}
-
-.display-area {
-  border: 2px solid #646cff;
-  min-height: 150px;
-  padding: 15px;
-  margin-bottom: 20px;
-  background-color: #f9f9f9;
-  color: #333;
-  font-size: 24px;
-}
-
-.keys {
+/* הגדרות כלליות לאפליקציה */
+.app-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center; 
+  direction: rtl;      /* כיוון כללי מימין לשמאל */
+  padding: 20px;
+  min-height: 100vh;
+  width: 100%;
+  font-family: sans-serif;
+  background-color: #f0f2f5; /* רקע עדין לדף */
+}
+
+/* כותרת וסרגלי שליטה - נצמדים לימין */
+h1, .controls, .special-actions {
+  width: 100%;
+  max-width: 600px;
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+/* אזור התצוגה (הריבוע הכחול) */
+.display-area {
+  border: 3px solid #646cff;
+  min-height: 150px;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  margin-bottom: 25px;
+  background-color: #ffffff;
+  color: #333;
+  font-size: 28px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: right;
+}
+
+/* סרגל כפתורי השפות */
+.controls {
+  display: flex;
   gap: 10px;
-  justify-content: center;
+  justify-content: flex-start; /* בגלל ה-rtl זה יתחיל מימין */
 }
 
+/* עיצוב כללי לכפתורים */
 button {
-  padding: 10px 20px;
-  font-size: 18px;
+  padding: 10px 18px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
 }
 
-.special-btn {
-  margin-top: 20px;
+button:hover {
+  background-color: #f0f0f0;
+  border-color: #646cff;
+}
+
+/* המקלדת - רשת (Grid) */
+.keyboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px 0;
+}
+
+/* מחלקות עזר לכיווניות המקלדת */
+.rtl-keyboard { direction: rtl; }
+.ltr-keyboard { direction: ltr; }
+
+/* עיצוב מקש בודד במקלדת */
+.key-button {
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* כפתורי פעולה מיוחדים (מחיקה, רווח) */
+.special-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.space-btn {
+  flex-grow: 1; /* שהרווח יהיה ארוך */
+}
+
+.delete-btn {
+  background-color: #ffcc00;
+  color: #000;
+  border: 2px solid #e6b800;
+}
+
+.delete-btn:hover {
+  background-color: #f2c200;
+}
+
+.clear-btn {
   background-color: #ff4747;
   color: white;
+  border: none;
+}
+
+.clear-btn:hover {
+  background-color: #e63939;
 }
