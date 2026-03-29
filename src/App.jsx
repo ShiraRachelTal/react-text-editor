@@ -1,62 +1,36 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from 'react';
+import Keyboard from './Keyboard'; // ייבוא הרכיב החדש
+import './App.css';
 
-// הגדרת המקלדות מחוץ לקומפוננטה
 const KEYBOARDS = {
-  hebrew: ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "כ", "ל", "מ", "נ", "ס", "ע", "פ", "צ", "ק", "ר", "ש", "ת"],
-  english: ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"],
-  emoji: ["😀", "😂", "😍", "🚀", "🍕", "🎈", "✨", "🔥"]
+  hebrew: ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י"],
+  english: ["A", "B", "C", "D", "E", "F"],
+  emoji: ["😀", "🚀", "🍕"]
 };
 
 function App() {
   const [text, setText] = useState("");
-  const [lang, setLang] = useState("hebrew"); // State לשפה הנוכחית
+  const [lang, setLang] = useState("hebrew");
 
-  // פונקציות עריכה (דרישה של חלק א')
-  const addChar = (char) => setText(prev => prev + char);
-  const deleteLast = () => setText(prev => prev.slice(0, -1));
-  const clearAll = () => {
-    if(window.confirm("בטוח שרוצים למחוק הכל?")) setText("");
-  };
+  const handleKeyClick = (char) => setText(prev => prev + char);
 
   return (
-    <div className="main-container">
-      <header>
-        <h1>עורך טקסט ויזואלי</h1>
-      </header>
-
-      {/* אזור הצגת הטקסט */}
-      <section className="display-area">
-        {text}
-        <span className="cursor">|</span>
-      </section>
-
-      {/* אזור הבקרה - החלפת שפות */}
-      <nav className="toolbar">
+    <div className="app-container">
+      <div className="display-screen">{text}</div>
+      
+      <div className="controls">
         <button onClick={() => setLang("hebrew")}>עברית</button>
         <button onClick={() => setLang("english")}>English</button>
-        <button onClick={() => setLang("emoji")}>😊</button>
-      </nav>
+      </div>
 
-      {/* המקלדת הדינמית */}
-      <section className="keyboard-container">
-        <div className="keys-grid">
-          {KEYBOARDS[lang].map(char => (
-            <button key={char} onClick={() => addChar(char)} className="key">
-              {char}
-            </button>
-          ))}
-        </div>
-
-        {/* לחיצים מיוחדים (מחיקת תו, רווח) */}
-        <div className="special-keys">
-          <button onClick={() => addChar(" ")} className="space-key">רווח</button>
-          <button onClick={deleteLast} className="delete-key">Delete</button>
-          <button onClick={clearAll} className="clear-key">מחק הכל</button>
-        </div>
-      </section>
+      {/* שימוש ברכיב המקלדת ושליחת המידע אליו ב-Props */}
+      <Keyboard 
+        activeLang={lang} 
+        onKeyClick={handleKeyClick} 
+        keyboardsData={KEYBOARDS} 
+      />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
