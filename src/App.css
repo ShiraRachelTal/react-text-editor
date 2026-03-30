@@ -14,7 +14,6 @@
 /* כותרת וסרגלי שליטה - נצמדים לימין */
 h1, .controls, .special-actions {
   width: 100%;
-  max-width: 600px;
   text-align: right;
   margin-bottom: 15px;
 }
@@ -24,7 +23,7 @@ h1, .controls, .special-actions {
   border: 3px solid #646cff;
   min-height: 150px;
   width: 100%;
-  max-width: 600px;
+  
   padding: 20px;
   margin-bottom: 25px;
   background-color: #ffffff;
@@ -67,7 +66,7 @@ button:hover {
   grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
   gap: 10px;
   width: 100%;
-  max-width: 600px;
+  
   margin: 20px 0;
 }
 

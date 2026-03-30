@@ -1,13 +1,14 @@
 import React from 'react';
 
-// ודאי שיש כאן סוגריים מסולסלים { } סביב text ו-style
 const Display = ({ text, style }) => {
   return (
     <div className="display-area" style={{ 
       color: style?.color || "black", 
-      fontSize: style?.fontSize || "28px" 
+      fontSize: style?.fontSize || "28px",
+      fontFamily: style?.fontFamily || "sans-serif"
     }}>
       {text || "התחילי להקליד..."}
+      <span className="cursor">|</span>
     </div>
   );
 };

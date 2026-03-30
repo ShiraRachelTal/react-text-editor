@@ -1,9 +1,12 @@
 import React from 'react';
 
-// רכיב המקלדת מקבל שתי "מתנות" (Props):
-// 1. הוכחה איזו שפה להציג (activeLang)
-// 2. פונקציה להפעלה כשלוחצים על מקש (onKeyClick)
 const Keyboard = ({ activeLang, onKeyClick, keyboardsData }) => {
+  
+  // מנגנון הגנה: אם הנתונים עדיין לא הגיעו, נחזיר "טוען" במקום לקרוס
+  if (!keyboardsData || !keyboardsData[activeLang]) {
+    return <div className="loading-msg">טוען מקלדת...</div>;
+  }
+
   return (
     <div className="keyboard-grid">
       {keyboardsData[activeLang].map((char) => (

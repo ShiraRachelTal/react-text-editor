@@ -3,33 +3,23 @@ import React from 'react';
 const Toolbar = ({ currentStyle, setStyle, onUndo, onDeleteWord, onClear, onReplace }) => {
   return (
     <div className="toolbar-container">
-      {/* בחירת צבעים */}
+      {/* בחירת צבעים - שינוי מכאן והלאה */}
       <div className="tool-group">
-        <span>צבע:</span>
-        <button onClick={() => setStyle({...currentStyle, color: "red"})} style={{color: "red"}}>A</button>
-        <button onClick={() => setStyle({...currentStyle, color: "blue"})} style={{color: "blue"}}>A</button>
-        <button onClick={() => setStyle({...currentStyle, color: "green"})} style={{color: "green"}}>A</button>
-      </div>
-
-      {/* בחירת גודל גופן */}
-      <div className="tool-group">
-        <span>גודל:</span>
-        <select onChange={(e) => setStyle({...currentStyle, fontSize: e.target.value})}>
-          <option value="20px">קטן</option>
-          <option value="28px">בינוני</option>
-          <option value="40px">גדול</option>
-        </select>
+        <button onClick={() => setStyle({...currentStyle, color: "red"})} style={{color: "red"}}>אדום</button>
+        <button onClick={() => setStyle({...currentStyle, color: "blue"})} style={{color: "blue"}}>כחול</button>
+        <button onClick={() => setStyle({...currentStyle, color: "black"})}>שחור</button>
       </div>
 
       {/* פעולות מתקדמות */}
       <div className="tool-group">
-        <button onClick={onUndo}>Undo ↩️</button>
+        <button onClick={onUndo} title="ביטול פעולה אחרונה">Undo ↩️</button>
         <button onClick={onDeleteWord}>מחק מילה 🔙</button>
         <button onClick={() => {
-          const find = prompt("חפש תו:");
-          const replace = prompt("החלף ב:");
-          if(find && replace) onReplace(find, replace);
+          const f = prompt("חפש תו:");
+          const r = prompt("החלף ב:");
+          if(f !== null && r !== null) onReplace(f, r);
         }}>חפש והחלף 🔍</button>
+        <button onClick={onClear} className="clear-btn">נקה הכל</button>
       </div>
     </div>
   );
