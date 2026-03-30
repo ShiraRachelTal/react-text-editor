@@ -1,15 +1,15 @@
 import React from 'react';
-export default Display;
 
+// ודאי שיש כאן סוגריים מסולסלים { } סביב text ו-style
 const Display = ({ text, style }) => {
   return (
     <div className="display-area" style={{ 
-      color: style.color, 
-      fontSize: style.fontSize, 
-      fontFamily: style.fontFamily 
+      color: style?.color || "black", 
+      fontSize: style?.fontSize || "28px" 
     }}>
       {text || "התחילי להקליד..."}
-      <span className="cursor">|</span>
     </div>
   );
 };
+
+export default Display;
