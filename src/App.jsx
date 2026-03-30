@@ -1,54 +1,65 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Keyboard from "./components/Keyboard";
 import Display from "./components/Display";
+import Toolbar from "./components/Toolbar"; // רכיב חדש שניצור
 import './App.css';
-
-const KEYBOARDS = {
-  hebrew: ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "כ", "ל", "מ", "נ", "ס", "ע", "פ", "צ", "ק", "ר", "ש", "ת", "ך", "ם", "ן", "ף", "ץ"],
-  english: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
-  symbols: ["!", "?", ".", ",", "(", ")", "@", "#", "$", "%", "&", "-", "+", "=", "/"],
-  emoji: ["😀", "😂", "😍", "🚀", "🍕", "🎈", "✨", "🔥", "🌈", "🎸"] // החזרנו אותם!
-};
 
 function App() {
   const [text, setText] = useState("");
-  const [lang, setLang] = useState("hebrew");
+  const [history, setHistory] = useState([""]); // להיסטוריית Undo
+  const [currentStyle, setCurrentStyle] = useState({
+    color: "black",
+    fontSize: "28px",
+    fontFamily: "sans-serif"
+  });
 
-  const handleKeyClick = (char) => setText(prev => prev + char);
-  
-  const deleteLastChar = () => {
-    setText(prev => prev.slice(0, -1));
+  // עדכון היסטוריה בכל שינוי טקסט (לצורך Undo)
+  const updateText = (newText) => {
+    setHistory(prev => [...prev, text]);
+    setText(newText);
+  };
+
+  // פעולות עריכה מתקדמות
+  const handleUndo = () => {
+    if (history.length > 0) {
+      const previous = history[history.length - 1];
+      setHistory(prev => prev.slice(0, -1));
+      setText(previous);
+    }
+  };
+
+  const deleteWord = () => {
+    const words = text.trimEnd().split(" ");
+    words.pop();
+    updateText(words.join(" "));
+  };
+
+  const findAndReplace = (toFind, toReplace) => {
+    updateText(text.replaceAll(toFind, toReplace));
   };
 
   return (
     <div className="app-container">
       <h1>עורך טקסט ויזואלי</h1>
-      
-      <Display text={text} />
-      
+
+      {/* העברת הסגנון לרכיב התצוגה */}
+      <Display text={text} style={currentStyle} />
+
+      {/* סרגל כלים חדש לעיצוב ופעולות מתקדמות */}
+      <Toolbar 
+        currentStyle={currentStyle} 
+        setStyle={setCurrentStyle} 
+        onUndo={handleUndo}
+        onDeleteWord={deleteWord}
+        onClear={() => updateText("")}
+        onReplace={findAndReplace}
+      />
+
       <div className="controls">
-        <button onClick={() => setLang("hebrew")}>עברית</button>
-        <button onClick={() => setLang("english")}>English</button>
-        <button onClick={() => setLang("symbols")}>#?!</button>
-        <button onClick={() => setLang("emoji")}>😊</button> 
+        {/* כפתורי החלפת שפה כפי שהיו... */}
       </div>
 
-      {/* המקלדת מקבלת את הכיווניות לפי השפה */}
-      <div className={lang === "hebrew" ? "rtl-keyboard" : "ltr-keyboard"}>
-        <Keyboard 
-          activeLang={lang} 
-          onKeyClick={handleKeyClick} 
-          keyboardsData={KEYBOARDS} 
-        />
-      </div>
-
-      <div className="special-actions">
-        <button onClick={() => handleKeyClick(" ")} className="space-btn">רווח</button>
-        <button onClick={deleteLastChar} className="delete-btn">מחיקת תו</button>
-        <button onClick={() => setText("")} className="clear-btn">נקה הכל</button>
-      </div>
+      <Keyboard onKeyClick={(char) => updateText(text + char)} />
     </div>
   );
 }
-
-export default App;

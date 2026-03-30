@@ -1,13 +1,15 @@
 import React from 'react';
+export default Display;
 
-// הרכיב מקבל את הטקסט להצגה (text) ואת הצבע הנוכחי (color)
-const Display = ({ text, color = "black" }) => {
+const Display = ({ text, style }) => {
   return (
-    <div className="display-area" style={{ color: color }}>
-      {text || "הקלידו משהו במקלדת..."}
+    <div className="display-area" style={{ 
+      color: style.color, 
+      fontSize: style.fontSize, 
+      fontFamily: style.fontFamily 
+    }}>
+      {text || "התחילי להקליד..."}
       <span className="cursor">|</span>
     </div>
   );
 };
-
-export default Display;
