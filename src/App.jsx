@@ -110,16 +110,21 @@ function App() {
     updateActiveFileText([]);
   };
 
-  const saveFile = () => {
-    if (!activeFile) return;
-    let name = activeFile.name;
+  const saveFile = (fileToSave = activeFile) => {
+    if (!fileToSave) return false;
+    let name = fileToSave.name;
+    
     if (name === "New File") {
-      name = prompt("Enter file name:") || "Untitled";
-      setOpenFiles(prev => prev.map(f => f.id === activeFileId ? {...f, name} : f));
+      const userInput = prompt("Enter file name:");
+      if (userInput === null) return false; 
+      name = userInput.trim() === "" ? "Untitled" : userInput;
+      setOpenFiles(prev => prev.map(f => f.id === fileToSave.id ? {...f, name} : f));
     }
-    localStorage.setItem(name, JSON.stringify(activeFile.text));
+    
+    localStorage.setItem(name, JSON.stringify(fileToSave.text));
     setSavedFilesList(Object.keys(localStorage));
     alert("Saved!");
+    return true; 
   };
 
   const loadFile = (name) => {
@@ -129,6 +134,62 @@ function App() {
       setOpenFiles([...openFiles, { id, name, text: JSON.parse(data), history: [] }]);
       setActiveFileId(id);
     }
+  };
+
+  // --- פונקציית המחיקה החדשה והחכמה ---
+  const handleDeleteFile = () => {
+    if (!activeFile) return;
+
+    const isSaved = localStorage.getItem(activeFile.name);
+
+    if (!isSaved) {
+      alert("This file hasn't been saved yet. You can just close the window.");
+      return;
+    }
+
+    const confirmDelete = window.confirm(`Are you sure you want to permanently delete "${activeFile.name}"?`);
+    
+    if (confirmDelete) {
+      localStorage.removeItem(activeFile.name); 
+      setSavedFilesList(Object.keys(localStorage)); 
+      setOpenFiles(prev => prev.filter(f => f.id !== activeFileId)); 
+      alert("File deleted successfully!");
+    }
+  };
+
+  const handleCloseWindow = (id) => {
+    const fileToClose = openFiles.find(f => f.id === id);
+    if (!fileToClose) return;
+
+    if (fileToClose.text.length > 0) {
+      const wantsToSave = window.confirm(`Do you want to save changes to "${fileToClose.name}" before closing?`);
+      
+      if (wantsToSave) {
+        const isSaved = saveFile(fileToClose);
+        if (!isSaved) {
+          const closeAnyway = window.confirm("Save cancelled. Are you sure you want to close without saving?");
+          if (!closeAnyway) {
+            return; 
+          }
+        }
+      }
+    }
+    setOpenFiles(openFiles.filter(f => f.id !== id));
+  };
+
+  const handleDownloadFile = () => {
+    if (!activeFile || activeFile.text.length === 0) {
+      alert("The file is empty.");
+      return;
+    }
+    const plainText = activeFile.text.map(item => item.char).join('');
+    const blob = new Blob([plainText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${activeFile.name === "New File" ? "Untitled" : activeFile.name}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const applyStyleToAll = () => {
@@ -141,7 +202,13 @@ function App() {
         <h1>File Management</h1>
         <div className="file-actions">
           <button onClick={() => setOpenFiles([...openFiles, { id: Date.now(), name: "New File", text: [], history: [] }])}>New Window 📄</button>
-          <button onClick={saveFile} disabled={!activeFile}>Save 💾</button>
+          <button onClick={() => saveFile(activeFile)} disabled={!activeFile}>Save 💾</button>
+          
+          {/* הנה כפתור המחיקה שנוסף! */}
+          <button onClick={handleDeleteFile} disabled={!activeFile} className="delete-file-btn">Delete 🗑️</button>
+          
+          <button onClick={handleDownloadFile} disabled={!activeFile} className="download-btn">Download TXT ⬇️</button>
+          
           <select className="file-select" onChange={(e) => { loadFile(e.target.value); e.target.value = ""; }} defaultValue="">
             <option value="" disabled>Open existing file</option>
             {savedFilesList.map(name => <option key={name} value={name}>{name}</option>)}
@@ -159,7 +226,7 @@ function App() {
               file={file}
               isActive={file.id === activeFileId}
               onFocus={() => setActiveFileId(file.id)}
-              onClose={(id) => setOpenFiles(openFiles.filter(f => f.id !== id))}
+              onClose={() => handleCloseWindow(file.id)}
             />
           ))
         )}
