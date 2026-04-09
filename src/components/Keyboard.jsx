@@ -1,22 +1,25 @@
 import React from 'react';
+import './Keyboard.css';
 
 const Keyboard = ({ activeLang, onKeyClick, keyboardsData }) => {
-  
-  // מנגנון הגנה: אם הנתונים עדיין לא הגיעו, נחזיר "טוען" במקום לקרוס
   if (!keyboardsData || !keyboardsData[activeLang]) {
     return <div className="loading-msg">טוען מקלדת...</div>;
   }
 
   return (
-    <div className="keyboard-grid">
-      {keyboardsData[activeLang].map((char) => (
-        <button 
-          key={char} 
-          className="key-button"
-          onClick={() => onKeyClick(char)}
-        >
-          {char}
-        </button>
+    <div className={`keyboard-container ${activeLang === 'english' ? 'ltr-keyboard' : 'rtl-keyboard'}`}>
+      {keyboardsData[activeLang].map((row, rowIndex) => (
+        <div key={rowIndex} className="keyboard-row">
+          {row.map((char) => (
+            <button 
+              key={char} 
+              className="key-button"
+              onClick={() => onKeyClick(char)}
+            >
+              {char}
+            </button>
+          ))}
+        </div>
       ))}
     </div>
   );

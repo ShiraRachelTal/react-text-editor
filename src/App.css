@@ -1,117 +1,178 @@
-/* הגדרות כלליות לאפליקציה */
+/* =========================================
+   מבנה האפליקציה המרכזי
+   ========================================= */
 .app-container {
   display: flex;
   flex-direction: column;
   align-items: center; 
-  direction: rtl;      /* כיוון כללי מימין לשמאל */
+  direction: ltr; 
   padding: 20px;
-  min-height: 100vh;
   width: 100%;
-  font-family: sans-serif;
-  background-color: #f0f2f5; /* רקע עדין לדף */
 }
 
-/* כותרת וסרגלי שליטה - נצמדים לימין */
-h1, .controls, .special-actions {
+/* =========================================
+   ניהול קבצים וחלונות
+   ========================================= */
+.file-header {
   width: 100%;
-  text-align: right;
-  margin-bottom: 15px;
-}
-
-/* אזור התצוגה (הריבוע הכחול) */
-.display-area {
-  border: 3px solid #646cff;
-  min-height: 150px;
-  width: 100%;
-  
-  padding: 20px;
-  margin-bottom: 25px;
-  background-color: #ffffff;
-  color: #333;
-  font-size: 28px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  text-align: right;
-}
-
-/* סרגל כפתורי השפות */
-.controls {
+  max-width: 1200px;
   display: flex;
-  gap: 10px;
-  justify-content: flex-start; /* בגלל ה-rtl זה יתחיל מימין */
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 15px 25px;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  border: 1px solid #333;
 }
 
-/* עיצוב כללי לכפתורים */
+.file-actions { display: flex; gap: 12px; }
+
+.windows-container {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.editor-window {
+  flex: 1 1 400px;
+  background-color: #1e1e1e;
+  border: 2px solid #333;
+  border-radius: 12px;
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.editor-window.active-window {
+  border-color: #00ffcc;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+}
+
+.window-header {
+  display: flex;
+  flex-direction: row; 
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #2c2c2c;
+  border-bottom: 1px solid #444;
+}
+
+.close-window-btn { order: 2; border-bottom: none; background: transparent; padding: 5px; } 
+.window-title { order: 1; text-align: left; font-weight: bold; }
+
+/* =========================================
+   תחנת עבודה וסרגלי כלים
+   ========================================= */
+.bottom-workspace {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1250px;
+  padding: 25px;
+  background-color: #1a1a1a;
+  border-radius: 20px;
+  margin-top: auto;
+}
+
+.side-panel {
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #242424;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #333;
+}
+
+.center-panel { flex-grow: 1; display: flex; flex-direction: column; align-items: center; max-width: 800px; }
+
+/* כפתורים כלליים ותפריטים */
 button {
   padding: 10px 18px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: #ffffff;
+  border: 1px solid #444;
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  border-bottom: 3px solid #111; 
   transition: all 0.2s ease;
 }
 
-button:hover {
-  background-color: #f0f0f0;
-  border-color: #646cff;
+button:hover:not(:disabled, .color-circle, .apply-all-btn, .shift-btn) {
+  background-color: #3d3d3d;
+  border-color: #666;
+  transform: translateY(-2px);
+  border-bottom-width: 5px;
 }
 
-/* המקלדת - רשת (Grid) */
-.keyboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
-  gap: 10px;
-  width: 100%;
-  
-  margin: 20px 0;
+button:active:not(:disabled, .color-circle) {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
 }
 
-/* מחלקות עזר לכיווניות המקלדת */
-.rtl-keyboard { direction: rtl; }
-.ltr-keyboard { direction: ltr; }
+button:disabled { opacity: 0.4; cursor: not-allowed; border-bottom-width: 1px; }
 
-/* עיצוב מקש בודד במקלדת */
-.key-button {
-  height: 55px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+.apply-all-btn {
+  background-color: #00ffcc !important;
+  color: #000 !important;
+  border-color: #00cca3 !important;
+  font-weight: bold;
+  margin-top: auto;
+}
+.apply-all-btn:hover { background-color: #00e6b8 !important; }
+
+.file-select, .toolbar-select {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
 }
 
-/* כפתורי פעולה מיוחדים (מחיקה, רווח) */
-.special-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
+.color-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.color-circle { 
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid #555; 
+  padding: 0; border-bottom: 2px solid #555;
+}
+.color-circle.selected { border: 3px solid #fff; transform: scale(1.1); }
+
+.active-lang {
+  background-color: transparent !important;
+  border: 2px solid #00ffcc !important;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+  color: #00ffcc !important;
 }
 
-.space-btn {
-  flex-grow: 1; /* שהרווח יהיה ארוך */
+/* הפעולות המיוחדות (רווח, מחיקה וכו') */
+.special-actions { display: flex; gap: 10px; width: 100%; margin-top: 15px; }
+
+.space-btn, .symbol-key, .delete-btn, .shift-btn {
+  height: 55px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  transition: all 0.1s;
 }
 
-.delete-btn {
-  background-color: #ffcc00;
-  color: #000;
-  border: 2px solid #e6b800;
-}
+.space-btn { flex: 6; background-color: #333; border-bottom: 5px solid #000; color: white; font-weight: bold; border: 1px solid #222; }
+.space-btn:active { transform: translateY(3px); border-bottom-width: 1px; }
 
-.delete-btn:hover {
-  background-color: #f2c200;
-}
+.symbol-key { flex: 1; background-color: #333; border-bottom: 5px solid #000; color: white; font-size: 1.4rem; border: 1px solid #222; } 
+.symbol-key:active { transform: translateY(3px); border-bottom-width: 1px; }
 
-.clear-btn {
-  background-color: #ff4747;
-  color: white;
-  border: none;
-}
+.delete-btn { flex: 2; background-color: #ff4747; border-bottom: 5px solid #800000; color: white; font-weight: bold; border: 1px solid #cc0000; }
+.delete-btn:active { transform: translateY(3px); border-bottom-width: 1px; }
 
-.clear-btn:hover {
-  background-color: #e63939;
-}
+.controls { display: flex; gap: 10px; margin-bottom: 15px; }

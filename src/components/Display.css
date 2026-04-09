@@ -1,0 +1,18 @@
+/* =========================================
+   עיצוב אזור התצוגה (העורך)
+   ========================================= */
+.display-area {
+  min-height: 250px;
+  padding: 20px;
+  text-align: left; 
+  white-space: pre-wrap;
+  flex-grow: 1;
+  position: relative;
+}
+
+.placeholder-text { 
+  color: #555; 
+  font-style: italic; 
+  position: absolute; 
+  left: 20px; 
+}

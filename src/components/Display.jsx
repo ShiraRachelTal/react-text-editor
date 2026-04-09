@@ -1,13 +1,25 @@
 import React from 'react';
+import './Display.css';
 
-const Display = ({ text, style }) => {
+const Display = ({ text }) => {
   return (
-    <div className="display-area" style={{ 
-      color: style?.color || "black", 
-      fontSize: style?.fontSize || "28px",
-      fontFamily: style?.fontFamily || "sans-serif"
-    }}>
-      {text || "התחילי להקליד..."}
+    <div className="display-area">
+      {text.length === 0 ? (
+        <span className="placeholder-text">Start typing...</span>
+      ) : (
+        text.map((item, index) => (
+          <span 
+            key={index} 
+            style={{
+              color: item.color,
+              fontSize: item.fontSize,
+              fontFamily: item.fontFamily
+            }}
+          >
+            {item.char}
+          </span>
+        ))
+      )}
       <span className="cursor">|</span>
     </div>
   );
