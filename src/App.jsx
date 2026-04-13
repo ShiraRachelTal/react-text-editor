@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import Keyboard from "./components/Keyboard";
-import EditorWindow from "./components/EditorWindow"; 
-import DesignPanel from "./components/DesignPanel";
-import ActionsPanel from "./components/ActionsPanel";
-import { KEYBOARDS } from './constants';
+import Keyboard from "./components/Keyboard/Keyboard";
+import EditorWindow from "./components/Editor/EditorWindow"; 
+import DesignPanel from "./components/Panels/DesignPanel";
+import ActionsPanel from "./components/Panels/ActionsPanel";
+import { KEYBOARDS } from './constants/constants';
+import { checkShouldCapitalize, calculateTextAfterWordDelete } from './utils/textUtils';
+import { downloadAsTxt } from './utils/fileUtils';
+import { getUserFilesList, saveToStorage, loadFromStorage, deleteFromStorage } from './utils/storageUtils';
+
 import './App.css';
 
 function App() {
@@ -25,20 +29,8 @@ function App() {
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
 
-  const checkShouldCapitalize = () => {
-    if (!activeFile || activeFile.text.length === 0) return true;
-    let lastChar = null;
-    for (let i = activeFile.text.length - 1; i >= 0; i--) {
-      if (activeFile.text[i].char !== ' ' && activeFile.text[i].char !== '\n') {
-        lastChar = activeFile.text[i].char;
-        break;
-      }
-    }
-    if (lastChar === null) return true; 
-    return ['.', '!', '?'].includes(lastChar);
-  };
-
-  const autoCap = checkShouldCapitalize();
+  // שימוש ב-Utils במקום לולאות פנימיות
+  const autoCap = checkShouldCapitalize(activeFile?.text);
   const isUpperCase = isShift ? !autoCap : autoCap;
 
   const dynamicKeyboards = { ...KEYBOARDS };
@@ -86,13 +78,11 @@ function App() {
     }));
   };
 
+  // שימוש ב-Utils למחיקת מילה
   const deleteWord = () => {
     if (!activeFile) return;
-    let lastSpaceIndex = -1;
-    for (let i = activeFile.text.length - 1; i >= 0; i--) {
-      if (activeFile.text[i].char === " ") { lastSpaceIndex = i; break; }
-    }
-    updateActiveFileText(lastSpaceIndex !== -1 ? activeFile.text.slice(0, lastSpaceIndex + 1) : []);
+    const newText = calculateTextAfterWordDelete(activeFile.text);
+    updateActiveFileText(newText);
   };
 
   const handleFindAndReplace = () => {
@@ -106,6 +96,7 @@ function App() {
 
   const handleClearAll = () => updateActiveFileText([]);
 
+  // פונקציית שמירה נקייה יותר
   const saveFile = (fileToSave = activeFile) => {
     if (!fileToSave || !currentUser) {
       alert("You must be logged in to save files!");
@@ -118,36 +109,37 @@ function App() {
       fileName = userInput.trim() === "" ? "Untitled" : userInput;
       setOpenFiles(prev => prev.map(f => f.id === fileToSave.id ? {...f, name: fileName} : f));
     }
-    const storageKey = `${currentUser}_${fileName}`;
-    localStorage.setItem(storageKey, JSON.stringify(fileToSave.text));
-    const userFiles = Object.keys(localStorage).filter(key => key.startsWith(`${currentUser}_`));
-    setSavedFilesList(userFiles.map(key => key.replace(`${currentUser}_`, "")));
+    
+    // שימוש ב-Utils
+    saveToStorage(currentUser, fileName, fileToSave.text);
+    setSavedFilesList(getUserFilesList(currentUser));
+    
     alert(`File "${fileName}" saved successfully for user ${currentUser}!`);
     return true; 
   };
 
+  // טעינה מקוצרת
   const loadFile = (fileName) => {
-    const storageKey = `${currentUser}_${fileName}`;
-    const data = localStorage.getItem(storageKey);
+    const data = loadFromStorage(currentUser, fileName);
     if (data) {
       const id = Date.now();
-      setOpenFiles([...openFiles, { id, name: fileName, text: JSON.parse(data), history: [] }]);
+      setOpenFiles([...openFiles, { id, name: fileName, text: data, history: [] }]);
       setActiveFileId(id);
     }
   };
 
+  // מחיקה מקוצרת
   const handleDeleteFile = () => {
     if (!activeFile || !currentUser) return;
-    const storageKey = `${currentUser}_${activeFile.name}`;
-    const isSaved = localStorage.getItem(storageKey);
+    const isSaved = loadFromStorage(currentUser, activeFile.name);
+    
     if (!isSaved) {
       alert("This file isn't saved in your account.");
       return;
     }
     if (window.confirm(`Are you sure you want to delete "${activeFile.name}"?`)) {
-      localStorage.removeItem(storageKey); 
-      const userFiles = Object.keys(localStorage).filter(key => key.startsWith(`${currentUser}_`));
-      setSavedFilesList(userFiles.map(key => key.replace(`${currentUser}_`, ""))); 
+      deleteFromStorage(currentUser, activeFile.name); 
+      setSavedFilesList(getUserFilesList(currentUser)); 
       setOpenFiles(prev => prev.filter(f => f.id !== activeFileId)); 
       alert("File deleted successfully!");
     }
@@ -164,27 +156,23 @@ function App() {
     setOpenFiles(openFiles.filter(f => f.id !== id));
   };
 
+  // הורדה שמנוהלת מבחוץ
   const handleDownloadFile = () => {
     if (!activeFile || activeFile.text.length === 0) return;
-    const plainText = activeFile.text.map(item => item.char).join('');
-    const blob = new Blob([plainText], { type: 'text/plain;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${activeFile.name}.txt`;
-    link.click();
+    downloadAsTxt(activeFile.name, activeFile.text);
   };
 
   const applyStyleToAll = () => {
     if(activeFile) updateActiveFileText(activeFile.text.map(item => ({...item, ...currentStyle})));
   };
 
+  // לוגין שמשתמש ב-Utils
   const handleLogin = () => {
     const name = prompt("הזן שם משתמש:");
     if (name && name.trim() !== "") {
       const userName = name.trim();
       setCurrentUser(userName);
-      const userFiles = Object.keys(localStorage).filter(key => key.startsWith(`${userName}_`));
-      setSavedFilesList(userFiles.map(key => key.replace(`${userName}_`, ""))); 
+      setSavedFilesList(getUserFilesList(userName)); 
     }
   };
 
