@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ActionsPanel = ({ onUndo, onDeleteWord, onFindAndReplace, onClearAll }) => {
-  return (
+  return ( // פאנל צדדי עם פעולות נוספות
     <div className="side-panel">
       <h3 className="panel-title">Actions</h3>
       <button onClick={onUndo}>Undo ↩️</button>

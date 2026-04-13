@@ -29,8 +29,8 @@
 .file-actions { display: flex; gap: 12px; }
 
 .windows-container {
-  display: flex;
-  flex-wrap: wrap; 
+  display: flex; /* מאפשר סידור אופקי של החלונות */
+  flex-wrap: wrap;  /* מאפשר חלונות לשורות נוספות אם אין מקום */
   gap: 20px;
   width: 100%;
   max-width: 1200px;
@@ -39,7 +39,7 @@
 }
 
 .editor-window {
-  flex: 1 1 400px;
+  flex: 1 1 400px; /* מאפשר גמישות בגודל עם בסיס מינימלי של 400 */
   background-color: #1e1e1e;
   border: 2px solid #333;
   border-radius: 12px;

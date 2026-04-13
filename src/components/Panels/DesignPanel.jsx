@@ -11,21 +11,24 @@ const DesignPanel = ({ currentStyle, setCurrentStyle, applyToAll }) => {
             key={c} 
             className={`color-circle ${currentStyle.color === c ? "selected" : ""}`} 
             style={{backgroundColor: c}} 
-            onClick={() => setCurrentStyle({...currentStyle, color: c})} 
+            onClick={() => setCurrentStyle({...currentStyle, color: c})} /* לחיצה על עיגול צבע משנה את הצבע הנוכחי בסגנון */
           />
         ))}
       </div>
+      {/* גודל גופן */}
       <select className="toolbar-select" value={currentStyle.fontSize} onChange={(e) => setCurrentStyle({...currentStyle, fontSize: e.target.value})}>
         <option value="16px">Small</option>
         <option value="28px">Large</option>
         <option value="40px">Huge</option>
       </select>
+      {/* סגנונות משפחת גופן */}
       <select className="toolbar-select" value={currentStyle.fontFamily} onChange={(e) => setCurrentStyle({...currentStyle, fontFamily: e.target.value})}>
         <option value="sans-serif">Regular</option>
         <option value="cursive">Cursive</option>
         <option value="monospace">Monospace</option>
       </select>
-      <button onClick={applyToAll} className="apply-all-btn">Apply to All ✨</button>
+      {/* כפתור שמחיל את הסגנון הנוכחי על כל התווים בכל החלונות */}
+      <button onClick={applyToAll} className="apply-all-btn">Apply to All ✨</button> 
     </div>
   );
 };

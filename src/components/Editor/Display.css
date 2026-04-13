@@ -5,14 +5,14 @@
   min-height: 250px;
   padding: 20px;
   text-align: left; 
-  white-space: pre-wrap;
+  white-space: pre-wrap; /*שמירת רווחים ושורות חדשות*/
   flex-grow: 1;
-  position: relative;
+  position: relative; 
 }
 
 .placeholder-text { 
   color: #555; 
-  font-style: italic; 
+  font-style: italic; /*עיצוב טקסט נטוי*/
   position: absolute; 
   left: 20px; 
 }
